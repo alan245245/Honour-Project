@@ -29,6 +29,7 @@ class Elevator:
 
         :param passenger:
         """
+        passenger.inElevator = True
         self.passengers.append(passenger)
 
     def remove_passenger(self):
@@ -40,7 +41,8 @@ class Elevator:
         for p in self.passengers:
             if p.reach_target(self.currentFloor):
                 passenger_exiting.append(p)
-                self.passengers.remove(p)
+        for p in passenger_exiting:
+            self.passengers.remove(p)
         return passenger_exiting
 
     def determine_target_floor(self):
@@ -65,7 +67,13 @@ class Elevator:
                     # if the called floor has the same direction as current elevator
                     current_distance = distance
                     self.targetFloor = f[0]
-        # Missing reverse direction
+        # Reverse direction
         if self.targetFloor == -1:
             self.direction = self.direction * -1 # reverse direction
             self.determine_target_floor()
+
+    def move_to_next_floor(self):
+        if self.direction == 1:
+            self.currentFloor = self.currentFloor + 1
+        else:
+            self.currentFloor = self.currentFloor - 1

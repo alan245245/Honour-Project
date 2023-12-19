@@ -6,6 +6,7 @@ class Passenger:
         self.targetFloor = targetFloor
         self.currentFloor = currentFloor
         self.arrived = False
+        self.inElevator = False
         self.waitTime = 0
         self.travelTime = 0
 
@@ -23,6 +24,8 @@ class Passenger:
 
     def reach_target(self, floor):
         if floor == self.targetFloor:
+            self.arrived = True
+            self.arrived_passenger.append(self)
             return True
         else:
             return False
