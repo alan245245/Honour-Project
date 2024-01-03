@@ -32,6 +32,7 @@ class Elevator:
         :param passenger:
         """
         passenger.inElevator = True
+        self.remove_call_floor(self.currentFloor, self.direction)
         self.passengers.append(passenger)
 
     def remove_passenger(self):

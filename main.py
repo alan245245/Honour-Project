@@ -18,7 +18,6 @@ for i in range(number_of_passenger):
     all_passenger.append(passenger)
     passenger = Passenger(2, 0)
     all_passenger.append(passenger)
-    all_passenger.append(passenger)
 
 for i in range(number_of_floor):
     passenger = []
@@ -37,6 +36,11 @@ for p in building[0].passenger:
 
 elevator = Elevator()
 while len(Passenger.all_passenger) != len(Passenger.arrived_passenger):
+    # Add called floors
+    for f in building:
+        for p in f.passenger:
+            elevator.add_call_floor(f.floor, p.direction)
+
     passengerExiting = list()
     if elevator.currentFloor == number_of_floor - 1:
         elevator.direction = -1
