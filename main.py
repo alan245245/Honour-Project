@@ -5,14 +5,19 @@ from Floor import Floor
 from Passenger import Passenger
 
 # config
-number_of_floor = 3
-number_of_passenger = 3
+number_of_floor = 10
+number_of_passenger = 1
 
 building = []
 all_passenger = []
 
 for i in range(number_of_passenger):
     passenger = Passenger(0, 2)
+    all_passenger.append(passenger)
+    passenger = Passenger(0, 1)
+    all_passenger.append(passenger)
+    passenger = Passenger(2, 0)
+    all_passenger.append(passenger)
     all_passenger.append(passenger)
 
 for i in range(number_of_floor):
@@ -32,14 +37,21 @@ for p in building[0].passenger:
 
 elevator = Elevator()
 while len(Passenger.all_passenger) != len(Passenger.arrived_passenger):
-    print(elevator.currentFloor)
+    passengerExiting = list()
+    if elevator.currentFloor == number_of_floor - 1:
+        elevator.direction = -1
+
+    # Passenger enter elevator
     for p in building[elevator.currentFloor].passenger:
         if p.direction == elevator.direction:
             elevator.add_passenger(p)
-            building[elevator.currentFloor].remove_passenger(p)
+            passengerExiting.append(p)
+    if len(passengerExiting) > 0:
+        Passenger.add_wait_time(2)
+    for p in passengerExiting:
+        building[elevator.currentFloor].remove_passenger(p)
+
     elevator.determine_target_floor()
+    elevator.remove_passenger()
     elevator.move_to_next_floor()
-    for p in elevator.passengers:
-        p.add_wait_time(4)
     print(Passenger.all_passenger)
-    print(elevator.remove_passenger())

@@ -1,4 +1,5 @@
 import math
+from Passenger import Passenger
 
 class Elevator:
     def __init__(self):
@@ -7,6 +8,7 @@ class Elevator:
         self.direction = 1
         self.passengers = list()
         self.calledFloor = set()
+        # self.highestFloor = floor
 
     def add_call_floor(self, callFloor, direction):
         """
@@ -43,6 +45,9 @@ class Elevator:
                 passenger_exiting.append(p)
         for p in passenger_exiting:
             self.passengers.remove(p)
+        if len(passenger_exiting) > 0:
+            Passenger.add_wait_time(2)
+
         return passenger_exiting
 
     def determine_target_floor(self):
@@ -67,12 +72,14 @@ class Elevator:
                     # if the called floor has the same direction as current elevator
                     current_distance = distance
                     self.targetFloor = f[0]
+
         # Reverse direction
         if self.targetFloor == -1:
             self.direction = self.direction * -1 # reverse direction
             self.determine_target_floor()
 
     def move_to_next_floor(self):
+        Passenger.add_wait_time(4)
         if self.direction == 1:
             self.currentFloor = self.currentFloor + 1
         else:

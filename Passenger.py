@@ -16,11 +16,16 @@ class Passenger:
             self.direction = -1
         self.all_passenger.append(self)
 
-    def add_wait_time(self, time):
-        self.waitTime = self.waitTime + time
+    def add_wait_time(time):
+        for p in Passenger.all_passenger:
+            if p.inElevator == False & p.arrived == False:
+                p.waitTime = p.waitTime + time
+            elif p.inElevator & p.arrived == False:
+                p.travelTime = p.travelTime + time
 
     def add_travel_time(self, time):
-        self.travelTime = self.travelTime + time
+        if self.arrived == False:
+            self.travelTime = self.travelTime + time
 
     def reach_target(self, floor):
         if floor == self.targetFloor:
