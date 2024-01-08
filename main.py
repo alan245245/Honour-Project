@@ -5,7 +5,7 @@ from Floor import Floor
 from Passenger import Passenger
 
 # config
-number_of_floor = 10
+number_of_floor = 6
 number_of_passenger = 1
 
 building = []
@@ -34,20 +34,20 @@ for p in building[0].passenger:
         temp = building[0].remove_passenger(p)
         print(temp)
 
-elevator = Elevator()
+elevator = Elevator(number_of_floor - 1)
 while len(Passenger.all_passenger) != len(Passenger.arrived_passenger):
     # Add called floors
     for f in building:
         for p in f.passenger:
             elevator.add_call_floor(f.floor, p.direction)
 
+    elevator.determine_target_floor()
+    elevator.remove_passenger() # Passenger exit elevator
     passengerExiting = list()
-    if elevator.currentFloor == number_of_floor - 1:
-        elevator.direction = -1
 
     # Passenger enter elevator
     for p in building[elevator.currentFloor].passenger:
-        if p.direction == elevator.direction:
+        if p.direction == elevator.direction: # If the elevator direction matches passenger's direction
             elevator.add_passenger(p)
             passengerExiting.append(p)
     if len(passengerExiting) > 0:
@@ -55,7 +55,6 @@ while len(Passenger.all_passenger) != len(Passenger.arrived_passenger):
     for p in passengerExiting:
         building[elevator.currentFloor].remove_passenger(p)
 
-    elevator.determine_target_floor()
-    elevator.remove_passenger()
+    print(elevator)
     elevator.move_to_next_floor()
     print(Passenger.all_passenger)

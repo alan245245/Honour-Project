@@ -2,13 +2,13 @@ import math
 from Passenger import Passenger
 
 class Elevator:
-    def __init__(self):
+    def __init__(self, floor):
         self.currentFloor = 0
         self.targetFloor = 0
         self.direction = 1
         self.passengers = list()
         self.calledFloor = set()
-        # self.highestFloor = floor
+        self.topFloor = floor
 
     def add_call_floor(self, callFloor, direction):
         """
@@ -74,14 +74,24 @@ class Elevator:
                     current_distance = distance
                     self.targetFloor = f[0]
 
-        # Reverse direction
+        # Reverse direction if no target found
         if self.targetFloor == -1:
             self.direction = self.direction * -1 # reverse direction
             self.determine_target_floor()
 
     def move_to_next_floor(self):
+        if self.currentFloor == self.targetFloor:
+            return
         Passenger.add_wait_time(4)
         if self.direction == 1:
             self.currentFloor = self.currentFloor + 1
+            if self.currentFloor == self.topFloor:
+                self.direction = self.direction * -1
         else:
             self.currentFloor = self.currentFloor - 1
+            if self.currentFloor < 0:
+                self.currentFloor = 0
+                print("WARNING: Elevator reaches floor smaller than 0")
+
+    def __str__(self):
+        return f"Elevator at {self.currentFloor} going {self.direction} to {self.targetFloor} with {len(self.passengers)} Passengers"
