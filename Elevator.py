@@ -79,6 +79,11 @@ class Elevator:
             self.direction = self.direction * -1 # reverse direction
             self.determine_target_floor()
 
+        if self.targetFloor > self.currentFloor:
+            self.direction = 1
+        elif self.targetFloor < self.currentFloor:
+            self.direction = -1
+
     def move_to_next_floor(self):
         if self.currentFloor == self.targetFloor:
             return
@@ -91,6 +96,7 @@ class Elevator:
             self.currentFloor = self.currentFloor - 1
             if self.currentFloor < 0:
                 self.currentFloor = 0
+                self.direction = self.direction * -1
                 print("WARNING: Elevator reaches floor smaller than 0")
 
     def __str__(self):

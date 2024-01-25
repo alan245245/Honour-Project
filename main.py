@@ -3,23 +3,24 @@ import random
 from Elevator import Elevator
 from Floor import Floor
 from Passenger import Passenger
+import csv
 
 # config
-number_of_floor = 6
-number_of_passenger = 1
+config_number_of_floor = 6
+config_number_of_passenger = 6
 
 building = []
 all_passenger = []
 
-for i in range(number_of_passenger):
-    passenger = Passenger(0, 2)
-    all_passenger.append(passenger)
-    passenger = Passenger(0, 1)
-    all_passenger.append(passenger)
-    passenger = Passenger(2, 0)
+for i in range(config_number_of_passenger):
+    spawn_floor = random.randint(0, config_number_of_floor - 1)
+    target_floor = random.randint(0, config_number_of_floor - 1)
+    while spawn_floor == target_floor:
+        target_floor = random.randint(0, config_number_of_floor - 1)
+    passenger = Passenger(spawn_floor, target_floor)
     all_passenger.append(passenger)
 
-for i in range(number_of_floor):
+for i in range(config_number_of_floor):
     passenger = []
     for p in all_passenger:
         if p.currentFloor == i:
@@ -29,12 +30,7 @@ for i in range(number_of_floor):
 for b in building:
     print(b)
 
-for p in building[0].passenger:
-    if p.targetFloor == 3:
-        temp = building[0].remove_passenger(p)
-        print(temp)
-
-elevator = Elevator(number_of_floor - 1)
+elevator = Elevator(config_number_of_floor - 1)
 while len(Passenger.all_passenger) != len(Passenger.arrived_passenger):
     # Add called floors
     for f in building:
@@ -58,3 +54,10 @@ while len(Passenger.all_passenger) != len(Passenger.arrived_passenger):
     print(elevator)
     elevator.move_to_next_floor()
     print(Passenger.all_passenger)
+print("Simulation Complete")
+
+with open('simulation_data.csv', 'w', newline='') as csvfile:
+    spamwriter = csv.writer(csvfile, dialect='excel', delimiter=' ',
+                            quotechar='\t', quoting=csv.QUOTE_MINIMAL)
+    for p in Passenger.all_passenger:
+        spamwriter.writerow("From:{} To:{} Wait:{} Travel:{}".format(p.currentFloor, p.targetFloor, p.waitTime, p.travelTime))
