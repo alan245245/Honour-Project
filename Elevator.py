@@ -9,6 +9,7 @@ class Elevator:
         self.passengers = list()
         self.calledFloor = set()
         self.topFloor = floor
+        self.capacity = 10
 
     def add_call_floor(self, callFloor, direction):
         """
@@ -16,6 +17,9 @@ class Elevator:
         :param callFloor:
         :param direction:
         """
+        if self.currentFloor == callFloor & self.direction == direction:
+            return
+
         self.calledFloor.add((callFloor, direction))
 
     def remove_call_floor(self, callFloor, direction):
@@ -31,9 +35,13 @@ class Elevator:
 
         :param passenger:
         """
-        passenger.inElevator = True
-        self.remove_call_floor(self.currentFloor, self.direction)
-        self.passengers.append(passenger)
+        if len(self.passengers) >= self.capacity:
+            return False
+        else:
+            passenger.inElevator = True
+            self.remove_call_floor(self.currentFloor, self.direction)
+            self.passengers.append(passenger)
+            return True
 
     def remove_passenger(self):
         """
@@ -66,7 +74,9 @@ class Elevator:
         # Loop through all called floor
         for f in self.calledFloor:
             difference = self.currentFloor - f[0] # Calculate the difference between floor
-            distance = abs(difference) # Absolute the difference to be distance
+            distance = int(abs(difference)) # Absolute the difference to be distance
+            if distance == 0:
+                return
             if distance < current_distance:
                 # If the current called floor is closer to current floor
                 if f[1] == self.direction:

@@ -7,7 +7,8 @@ import csv
 
 # config
 config_number_of_floor = 6
-config_number_of_passenger = 6
+config_number_of_passenger = 160
+config_elevator_capacity = 10
 
 building = []
 all_passenger = []
@@ -44,8 +45,9 @@ while len(Passenger.all_passenger) != len(Passenger.arrived_passenger):
     # Passenger enter elevator
     for p in building[elevator.currentFloor].passenger:
         if p.direction == elevator.direction: # If the elevator direction matches passenger's direction
-            elevator.add_passenger(p)
-            passengerExiting.append(p)
+            response = elevator.add_passenger(p)
+            if response:
+                passengerExiting.append(p)
     if len(passengerExiting) > 0:
         Passenger.add_wait_time(2)
     for p in passengerExiting:
