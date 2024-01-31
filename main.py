@@ -54,12 +54,14 @@ while len(Passenger.all_passenger) != len(Passenger.arrived_passenger):
         building[elevator.currentFloor].remove_passenger(p)
 
     print(elevator)
-    elevator.move_to_next_floor()
     print(Passenger.all_passenger)
+    elevator.move_to_next_floor()
 print("Simulation Complete")
 
 with open('simulation_data.csv', 'w', newline='') as csvfile:
-    spamwriter = csv.writer(csvfile, dialect='excel', delimiter=' ',
-                            quotechar='\t', quoting=csv.QUOTE_MINIMAL)
+    spamwriter = csv.writer(csvfile, dialect='unix', delimiter=' ',
+                            quotechar='\"', quoting=csv.QUOTE_MINIMAL)
+    spamwriter.writerow(['From', 'To', 'Wait Time', 'Travel Time'])
     for p in Passenger.all_passenger:
-        spamwriter.writerow("From:{} To:{} Wait:{} Travel:{}".format(p.currentFloor, p.targetFloor, p.waitTime, p.travelTime))
+        spamwriter.writerow([p.currentFloor, p.targetFloor, p.waitTime, p.travelTime])
+        #spamwriter.writerow("From:{} To:{} Wait:{} Travel:{}".format(p.currentFloor, p.targetFloor, p.waitTime, p.travelTime))
