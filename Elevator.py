@@ -1,6 +1,7 @@
 import math
 from Passenger import Passenger
 
+
 class Elevator:
     def __init__(self, floor):
         self.currentFloor = 0
@@ -73,20 +74,27 @@ class Elevator:
 
         # Loop through all called floor
         for f in self.calledFloor:
-            difference = self.currentFloor - f[0] # Calculate the difference between floor
-            distance = int(abs(difference)) # Absolute the difference to be distance
-            if distance == 0:
-                return
-            if distance < current_distance:
-                # If the current called floor is closer to current floor
-                if f[1] == self.direction:
-                    # if the called floor has the same direction as current elevator
-                    current_distance = distance
-                    self.targetFloor = f[0]
+            difference = self.currentFloor - f[0]  # Calculate the difference between floor
+            distance = int(abs(difference))  # Absolute the difference to be distance
+            if self.is_in_current_path(f[0]) & self.has_passenger():
+                if distance < current_distance:
+                    # If the current called floor is closer to current floor
+                    if f[1] == self.direction:
+                        # if the called floor has the same direction as current elevator
+                        current_distance = distance
+                        self.targetFloor = f[0]
+            elif self.has_passenger() == False:
+                if distance < current_distance:
+                    # If the current called floor is closer to current floor
+                    if f[1] == self.direction:
+                        # if the called floor has the same direction as current elevator
+                        current_distance = distance
+                        self.targetFloor = f[0]
+
 
         # Reverse direction if no target found
         if self.targetFloor == -1:
-            self.direction = self.direction * -1 # reverse direction
+            self.direction = self.direction * -1  # reverse direction
             self.determine_target_floor()
 
         if self.targetFloor > self.currentFloor:
@@ -108,6 +116,24 @@ class Elevator:
                 self.currentFloor = 0
                 self.direction = self.direction * -1
                 print("WARNING: Elevator reaches floor smaller than 0")
+
+    def is_in_current_path(self, target_floor):
+        if target_floor == -1:
+            return False
+        difference = self.currentFloor - target_floor
+        if difference > 0 & self.direction == -1:
+            # if positive and elevator moving downward
+            return True
+        elif difference <= 0 & self.direction == -1:
+            #if negative and elevator moving upward
+            return True
+        else:
+            return False
+    def has_passenger(self):
+        if len(self.passengers) > 0:
+            return True
+        else:
+            return False
 
     def __str__(self):
         return f"Elevator at {self.currentFloor} going {self.direction} to {self.targetFloor} with {len(self.passengers)} Passengers"
