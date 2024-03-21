@@ -63,7 +63,7 @@ class Elevator:
 
     def determine_target_floor(self):
         match self.algorithm:
-            case 0:
+            case "Proposed":
                 current_distance = math.inf
                 self.targetFloor = -1
                 # Loop through all passengers in the lift
@@ -104,7 +104,7 @@ class Elevator:
                 elif self.targetFloor < self.currentFloor:
                     self.direction = -1
 
-            case 1:
+            case "Nearest-First":
                 current_distance = math.inf
                 self.targetFloor = -1
                 # Loop through all passengers in the lift
@@ -138,7 +138,7 @@ class Elevator:
             if self.currentFloor == 0:
                 self.direction = 1
             return
-        Passenger.add_wait_time(4)
+        # Passenger.add_wait_time(4)
         if self.direction == 1:
             self.currentFloor = self.currentFloor + 1
             if self.currentFloor == self.topFloor:
