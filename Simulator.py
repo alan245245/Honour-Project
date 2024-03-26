@@ -6,6 +6,9 @@ import random
 building = []
 
 def pre_generate_passenger(mode, preset, number_of_passengers, number_of_floor):
+    """
+    Function to generate passenger from simulator start.
+    """
     if mode:
         for i in range(number_of_passengers):
             spawn_floor = random.randint(0, number_of_floor - 1)
@@ -37,10 +40,23 @@ def pre_generate_passenger(mode, preset, number_of_passengers, number_of_floor):
     for b in building:
         print(b)
 
+def clear_simulator_data():
+    """
+    Function to clear all passenger
+    """
+    Passenger.all_passenger.clear()
+    Passenger.arrived_passenger.clear()
+    building.clear()
 
 def start_static_simulation(passenger_mode, preset, number_of_passengers, number_of_floor, elevator_algorithm):
+    """
+    Function to start simulation with non real time passenger generation
+    """
+    clear_simulator_data()
     elevator = Elevator(number_of_floor - 1, elevator_algorithm)
     pre_generate_passenger(passenger_mode, preset, number_of_passengers, number_of_floor)
+
+    # Start simulation loop until all passenger reached destination
     while len(Passenger.all_passenger) != len(Passenger.arrived_passenger):
         # Add called floors
         for f in building:
@@ -75,12 +91,23 @@ def start_static_simulation(passenger_mode, preset, number_of_passengers, number
 
         elevator.remove_passenger()  # Passenger exit elevator
         print(elevator)
-        print(Passenger.all_passenger)
         elevator.move_to_next_floor()
+        Passenger.add_wait_time(4)
+
+    print(f"Simulation End")
+    print(Passenger.all_passenger)
+    wait_time_sum = 0
+    travel_time_sum = 0
+    for p in Passenger.all_passenger:
+        wait_time_sum = wait_time_sum + p.waitTime
+        travel_time_sum = travel_time_sum + p.travelTime
+    print(f"Avg Wait Time: {wait_time_sum / len(Passenger.all_passenger)} | Avg Travel Time: {travel_time_sum / len(Passenger.all_passenger)}")
 
 def start_real_time_simulation(number_of_passengers, number_of_floor, elevator_algorithm):
-    Passenger.all_passenger.clear()
-    Passenger.arrived_passenger.clear()
+    """
+    Function to start simulation with real time passenger generation
+    """
+    clear_simulator_data()
     for i in range(number_of_floor):
         building.append(Floor(i, []))
     elevator = Elevator(number_of_floor - 1, elevator_algorithm)
@@ -156,5 +183,4 @@ def start_real_time_simulation(number_of_passengers, number_of_floor, elevator_a
     for p in Passenger.all_passenger:
         wait_time_sum = wait_time_sum + p.waitTime
         travel_time_sum = travel_time_sum + p.travelTime
-    print(
-        f"Avg Wait Time: {wait_time_sum / len(Passenger.all_passenger)} | Avg Travel Time: {travel_time_sum / len(Passenger.all_passenger)}")
+    print(f"Avg Wait Time: {wait_time_sum / len(Passenger.all_passenger)} | Avg Travel Time: {travel_time_sum / len(Passenger.all_passenger)}")
