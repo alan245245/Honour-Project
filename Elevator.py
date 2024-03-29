@@ -89,10 +89,14 @@ class Elevator:
                     elif self.has_passenger() == False:
                         if distance < current_distance:
                             # If the current called floor is closer to current floor
-                            if f[1] == self.direction:
-                                # if the called floor has the same direction as current elevator
-                                current_distance = distance
-                                self.targetFloor = f[0]
+                            current_distance = distance
+                            self.targetFloor = f[0]
+                            self.direction = f[1]
+
+                if len(Passenger.all_passenger) == len(Passenger.arrived_passenger):
+                    self.targetFloor = self.currentFloor
+                    self.direction = 0
+                    return
 
                 # Reverse direction if no target found
                 if self.targetFloor == -1:
@@ -143,6 +147,8 @@ class Elevator:
             self.currentFloor = self.currentFloor + 1
             if self.currentFloor == self.topFloor:
                 self.direction = self.direction * -1
+        elif self.direction == 0:
+            pass
         else:
             self.currentFloor = self.currentFloor - 1
             if self.currentFloor < 0:
