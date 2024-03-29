@@ -2,6 +2,8 @@ import sys
 from tkinter import *
 from tkinter import Tk, ttk
 from tkinter.scrolledtext import ScrolledText
+import time
+import re
 
 import Simulator as Simulator
 from PrintLogger import PrintLogger
@@ -33,17 +35,19 @@ class GUI(Tk):
         self.random_passenger = ttk.Radiobutton(self.passenger_options, text='Random', variable=self.passenger_mode, value='random')
         self.preset_passenger = ttk.Radiobutton(self.passenger_options, text='Preset', variable=self.passenger_mode, value='preset')
 
+        # check num wrapper
+        check_num = (self.register(self.check_num), '%P')
         # Init number of passenger frame, label and entry
         self.number_of_passenger_options = ttk.Frame(self.option_frame)
         self.number_of_passenger = StringVar()
         self.number_of_passengerlbl = ttk.Label(self.number_of_passenger_options, text="No. of Passengers: ")
-        self.number_of_passenger_entry = ttk.Entry(self.number_of_passenger_options, textvariable=self.number_of_passenger, width=6)
+        self.number_of_passenger_entry = ttk.Entry(self.number_of_passenger_options, textvariable=self.number_of_passenger, width=6, validate='key', validatecommand=check_num)
 
         # Init number of floor frame, label and entry
         self.number_of_floor_options = ttk.Frame(self.option_frame)
         self.number_of_floor = StringVar()
         self.number_of_floorlbl = ttk.Label(self.number_of_floor_options, text="No. of Floor: ")
-        self.number_of_floor_entry = ttk.Entry(self.number_of_floor_options, textvariable=self.number_of_floor, width=6)
+        self.number_of_floor_entry = ttk.Entry(self.number_of_floor_options, textvariable=self.number_of_floor, width=6, validate='key', validatecommand=check_num)
 
         # Init passenger preset frame, label and combo box
         self.passenger_preset_options = ttk.Frame(self.option_frame)
@@ -63,6 +67,22 @@ class GUI(Tk):
         self.action_buttons_frame = ttk.Frame(self.option_frame)
         self.button_start = ttk.Button(self.action_buttons_frame, text="Start", command=self.start_real_time_simulation)
         self.button_reset = ttk.Button(self.action_buttons_frame, text="Reset", command=self.reset_form)
+
+        # Init output csv frame
+        self.csv_output_enabled_frame = ttk.Frame(self.option_frame)
+        self.csv_output_enabledlbl = ttk.Label(self.csv_output_enabled_frame, text="CSV output")
+        self.csv_output_enabled = StringVar()
+        self.csv_button_enabled = ttk.Radiobutton(self.csv_output_enabled_frame, text='Enabled', variable=self.csv_output_enabled, value='True')
+        self.csv_button_disabled = ttk.Radiobutton(self.csv_output_enabled_frame, text='Disabled', variable=self.csv_output_enabled, value='False')
+        self.csv_file_name_frame = ttk.Frame(self.option_frame)
+        self.csv_file_namelbl = ttk.Label(self.csv_file_name_frame, text="Name of output file")
+        self.csv_file_name = StringVar()
+        self.csv_file_name_entry = ttk.Entry(self.csv_file_name_frame, textvariable=self.csv_file_name)
+        self.csv_file_name_entry.insert(0, time.strftime("%Y%m%d-%H%M%S"))
+        self.csv_batch_simulation_frame = ttk.Frame(self.option_frame)
+        self.csv_batch_simulationlbl = ttk.Label(self.csv_batch_simulation_frame, text="Batch Simulation (Default 1)")
+        self.csv_batch_simulation = StringVar()
+        self.csv_batch_simulation_entry = ttk.Entry(self.csv_batch_simulation_frame, textvariable=self.csv_batch_simulation, width=6, validate='key', validatecommand=check_num)
 
         summary_frame = ttk.Frame(self)
 
@@ -91,10 +111,20 @@ class GUI(Tk):
         self.elevator_algorithm_options.grid(column=3, row=10, rowspan=2, sticky='N W')
         self.elevator_algorithmlbl.grid(column=3, row=10, sticky='N W')
         self.elevator_algorithm_menu.grid(column=3, row=11, sticky='N W')
+        self.csv_output_enabled_frame.grid(column=3, row=12, columnspan=2, sticky='N W')
+        self.csv_output_enabledlbl.grid(column=3, row=12, sticky='N W')
+        self.csv_button_enabled.grid(column=3, row=13, sticky='N W')
+        self.csv_button_disabled.grid(column=4, row=13, sticky='N W')
+        self.csv_file_name_frame.grid(column=3, row=14, sticky='N W')
+        self.csv_file_namelbl.grid(column=3, row=14, sticky='N W')
+        self.csv_file_name_entry.grid(column=3, row=15, columnspan=2, sticky='N W')
+        self.csv_batch_simulation_frame.grid(column=3, row=16, sticky='N W')
+        self.csv_batch_simulationlbl.grid(column=3, row=16, sticky='N W')
+        self.csv_batch_simulation_entry.grid(column=3, row=17, sticky='N W')
 
-        self.action_buttons_frame.grid(column=3, row=12, columnspan=2, pady=5)
-        self.button_start.grid(column=3, row=12)
-        self.button_reset.grid(column=4, row=12)
+        self.action_buttons_frame.grid(column=3, row=18, columnspan=2, pady=5)
+        self.button_start.grid(column=3, row=18)
+        self.button_reset.grid(column=4, row=18)
 
         # Make log frame dynamic
         self.columnconfigure(0, weight=1)
@@ -106,6 +136,10 @@ class GUI(Tk):
         logger = PrintLogger(self.log_widget)
         sys.stdout = logger
         sys.stderr = logger
+
+    def check_num(self, P):
+        return re.match('^[0-9]*$', P) is not None
+
         
     def start_real_time_simulation(self):
         """
@@ -116,16 +150,27 @@ class GUI(Tk):
             no_of_floor = int(self.number_of_floor.get())
         except:
             print("Please enter number for number of passengers or number of floors")
+
+        try:
+            csv_batch_number = int(self.csv_batch_simulation.get())
+        except:
+            csv_batch_number = 1
+
         passenger_mode = self.passenger_mode.get()
         passenger_preset = self.passenger_preset.get()
         elevator_algorithm = self.elevator_algorithm.get()
         simulator_mode = self.simulator_mode.get()
+        csv_enabled = self.csv_output_enabled.get()
+        csv_file_name = self.csv_file_name.get()
         match simulator_mode:
             case 'real':
                 if not elevator_algorithm:
                     print("Please select elevator algorithm")
                     return
-                Simulator.start_real_time_simulation(no_of_passenger, no_of_floor, elevator_algorithm)
+                if csv_enabled == 'True' and not csv_file_name:
+                    print("Please enter CSV filename")
+                    return
+                Simulator.start_real_time_simulation(no_of_passenger, no_of_floor, elevator_algorithm, csv_enabled, csv_file_name, csv_batch_number)
             case 'static':
                 if not elevator_algorithm:
                     print("Please select elevator algorithm")
@@ -136,7 +181,10 @@ class GUI(Tk):
                 if passenger_mode == "preset" and not passenger_preset:
                     print("Please select preset")
                     return
-                Simulator.start_static_simulation(passenger_mode, passenger_preset, no_of_passenger, no_of_floor, elevator_algorithm)
+                if csv_enabled == 'True' and not csv_file_name:
+                    print("Please enter CSV filename")
+                    return
+                Simulator.start_static_simulation(passenger_mode, passenger_preset, no_of_passenger, no_of_floor, elevator_algorithm, csv_enabled, csv_file_name, csv_batch_number)
 
     def reset_form(self):
         """
