@@ -14,7 +14,7 @@ class GUI(Tk):
 
         # Init log frame and widget
         self.log_frame = ttk.Frame(self, borderwidth=5, relief="ridge", width=200, height=100)
-        self.log_widget = ScrolledText(self.log_frame, width=30, height=8, font=("consolas", "8", "normal"))
+        self.log_widget = ScrolledText(self.log_frame, width=200, height=8, font=("consolas", "8", "normal"))
         self.log_widget.configure(state='disabled')
 
         # Init options frame and label
@@ -78,7 +78,7 @@ class GUI(Tk):
         self.csv_file_namelbl = ttk.Label(self.csv_file_name_frame, text="Name of output file")
         self.csv_file_name = StringVar()
         self.csv_file_name_entry = ttk.Entry(self.csv_file_name_frame, textvariable=self.csv_file_name)
-        self.csv_file_name_entry.insert(0, time.strftime("%Y%m%d-%H%M%S"))
+        self.csv_file_name_entry.insert(0, time.strftime("SimulationData-%Y%m%d-%H%M%S"))
         self.csv_batch_simulation_frame = ttk.Frame(self.option_frame)
         self.csv_batch_simulationlbl = ttk.Label(self.csv_batch_simulation_frame, text="Batch Simulation (Default 1)")
         self.csv_batch_simulation = StringVar()
@@ -150,6 +150,7 @@ class GUI(Tk):
             no_of_floor = int(self.number_of_floor.get())
         except:
             print("Please enter number for number of passengers or number of floors")
+            return
 
         try:
             csv_batch_number = int(self.csv_batch_simulation.get())
@@ -175,7 +176,7 @@ class GUI(Tk):
                 if not elevator_algorithm:
                     print("Please select elevator algorithm")
                     return
-                if not passenger_mode:
+                if not passenger_mode and passenger_mode != "preset":
                     print("Please select passenger mode")
                     return
                 if passenger_mode == "preset" and not passenger_preset:
@@ -185,6 +186,8 @@ class GUI(Tk):
                     print("Please enter CSV filename")
                     return
                 Simulator.start_static_simulation(passenger_mode, passenger_preset, no_of_passenger, no_of_floor, elevator_algorithm, csv_enabled, csv_file_name, csv_batch_number)
+        self.csv_file_name_entry.delete(0,'end')
+        self.csv_file_name_entry.insert(0, time.strftime("SimulationData-%Y%m%d-%H%M%S"))
 
     def reset_form(self):
         """

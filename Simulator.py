@@ -3,6 +3,8 @@ from Elevator import Elevator
 from Floor import Floor
 import csv
 import random
+import numpy as np
+from scipy.stats import poisson
 
 building = []
 
@@ -10,7 +12,7 @@ def pre_generate_passenger(mode, preset, number_of_passengers, number_of_floor):
     """
     Function to generate passenger from simulator start.
     """
-    if mode:
+    if mode == 'random':
         for i in range(number_of_passengers):
             spawn_floor = random.randint(0, number_of_floor - 1)
             target_floor = random.randint(0, number_of_floor - 1)
@@ -19,17 +21,16 @@ def pre_generate_passenger(mode, preset, number_of_passengers, number_of_floor):
             passenger = Passenger(spawn_floor, target_floor)
     else:
         match preset:
-            case 0:
+            case 'Morning Rush':
+                for i in range(number_of_floor - 1):
+                    for y in range(5):
+                        if i != 0:
+                            Passenger(i, 0)
+            case 'Evening Rush':
                 for i in range(number_of_floor - 1):
                     for y in range(5):
                         if i != 0:
                             Passenger(0, i)
-            case 1:
-                for i in range(number_of_floor - 1):
-                    for y in range(3):
-                        if i != 0:
-                            Passenger(0, i)
-                            Passenger(i, 0)
 
     for i in range(number_of_floor):
         passenger = []
@@ -120,18 +121,24 @@ def start_real_time_simulation(number_of_passengers, number_of_floor, elevator_a
     """
     Function to start simulation with real time passenger generation
     """
+    k = np.arange(0, 18)
+    cdf = poisson.cdf(k, mu=7)
+    cdf = np.round(cdf, 3)
     for y in range(batch_no):
         clear_simulator_data()
         for i in range(number_of_floor):
             building.append(Floor(i, []))
         elevator = Elevator(number_of_floor - 1, elevator_algorithm)
         time = 0
+        p_time = 0
         elevator_time = 0
         while len(Passenger.all_passenger) <= number_of_passengers | len(Passenger.all_passenger) != len(
                 Passenger.arrived_passenger):
             # Roll dice to decide whether passenger will be spawned
-            if (random.randint(0, 100) >= 75) & (len(Passenger.all_passenger) < number_of_passengers):
+            dice = random.random() <= cdf[np.clip(time - p_time, 0, 17)]
+            if (dice) & (len(Passenger.all_passenger) < number_of_passengers):
                 generate_passenger = random.randint(1, 1)
+                p_time = time
 
                 # Ensure does not exceed number_of_passengers
                 if (number_of_passengers - len(Passenger.all_passenger) - generate_passenger) < 0:
