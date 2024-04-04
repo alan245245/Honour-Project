@@ -136,7 +136,7 @@ def start_real_time_simulation(number_of_passengers, number_of_floor, elevator_a
                 Passenger.arrived_passenger):
             # Roll dice to decide whether passenger will be spawned
             dice = random.random() <= cdf[np.clip(time - p_time, 0, 17)]
-            if (dice) & (len(Passenger.all_passenger) < number_of_passengers):
+            if dice & (len(Passenger.all_passenger) < number_of_passengers):
                 generate_passenger = random.randint(1, 1)
                 p_time = time
 
