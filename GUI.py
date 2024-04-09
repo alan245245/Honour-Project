@@ -11,6 +11,7 @@ from PrintLogger import PrintLogger
 class GUI(Tk):
     def __init__(self):
         Tk.__init__(self)
+        self.title("Elevator Simulator")
 
         # Init log frame and widget
         self.log_frame = ttk.Frame(self, borderwidth=5, relief="ridge", width=200, height=100)
@@ -22,14 +23,14 @@ class GUI(Tk):
         self.option_framelbl = ttk.Label(self.option_frame, text="Options")
 
         # Init simulator options frame, label and radio buttonw
-        self.simulator_option = ttk.Frame(self.option_frame)
+        self.simulator_option = ttk.Frame(self.option_frame, padding=2)
         self.simulator_mode = StringVar()
         self.simulator_modelbl = ttk.Label(self.simulator_option, text="Simulation Mode")
         self.real_time = ttk.Radiobutton(self.simulator_option, text='Real-time', variable=self.simulator_mode, value='real')
         self.fixed_time = ttk.Radiobutton(self.simulator_option, text='Fixed-time', variable=self.simulator_mode, value='static')
 
         # Init passenger option frame, label and radio buttons
-        self.passenger_options = ttk.Frame(self.option_frame)
+        self.passenger_options = ttk.Frame(self.option_frame, padding=2)
         self.passenger_mode = StringVar()
         self.passenger_modelbl = ttk.Label(self.passenger_options, text="Passenger Mode")
         self.random_passenger = ttk.Radiobutton(self.passenger_options, text='Random', variable=self.passenger_mode, value='random')
@@ -38,48 +39,48 @@ class GUI(Tk):
         # check num wrapper
         check_num = (self.register(self.check_num), '%P')
         # Init number of passenger frame, label and entry
-        self.number_of_passenger_options = ttk.Frame(self.option_frame)
+        self.number_of_passenger_options = ttk.Frame(self.option_frame, padding=2)
         self.number_of_passenger = StringVar()
         self.number_of_passengerlbl = ttk.Label(self.number_of_passenger_options, text="No. of Passengers: ")
         self.number_of_passenger_entry = ttk.Entry(self.number_of_passenger_options, textvariable=self.number_of_passenger, width=6, validate='key', validatecommand=check_num)
 
         # Init number of floor frame, label and entry
-        self.number_of_floor_options = ttk.Frame(self.option_frame)
+        self.number_of_floor_options = ttk.Frame(self.option_frame, padding=2)
         self.number_of_floor = StringVar()
         self.number_of_floorlbl = ttk.Label(self.number_of_floor_options, text="No. of Floor: ")
         self.number_of_floor_entry = ttk.Entry(self.number_of_floor_options, textvariable=self.number_of_floor, width=6, validate='key', validatecommand=check_num)
 
         # Init passenger preset frame, label and combo box
-        self.passenger_preset_options = ttk.Frame(self.option_frame)
+        self.passenger_preset_options = ttk.Frame(self.option_frame, padding=2)
         self.passenger_preset = StringVar()
         self.passenger_presetlbl = ttk.Label(self.passenger_preset_options, text="Select Preset")
         self.passenger_preset_menu = ttk.Combobox(self.passenger_preset_options, textvariable=self.passenger_preset)
         self.passenger_preset_menu['values'] = ('Morning Rush', 'Evening Rush', 'Distributed')
 
         # Init elevator algorithm frame, label and combo box
-        self.elevator_algorithm_options = ttk.Frame(self.option_frame)
+        self.elevator_algorithm_options = ttk.Frame(self.option_frame, padding=2)
         self.elevator_algorithm = StringVar()
         self.elevator_algorithmlbl = ttk.Label(self.elevator_algorithm_options, text="Select Elevator Algorithm")
         self.elevator_algorithm_menu = ttk.Combobox(self.elevator_algorithm_options, textvariable=self.elevator_algorithm)
         self.elevator_algorithm_menu['values'] = ('Proposed', 'Nearest-First')
 
         # Init action buttons frame, start and cancel button
-        self.action_buttons_frame = ttk.Frame(self.option_frame)
+        self.action_buttons_frame = ttk.Frame(self.option_frame, padding=2)
         self.button_start = ttk.Button(self.action_buttons_frame, text="Start", command=self.start_real_time_simulation)
         self.button_reset = ttk.Button(self.action_buttons_frame, text="Reset", command=self.reset_form)
 
         # Init output csv frame
-        self.csv_output_enabled_frame = ttk.Frame(self.option_frame)
+        self.csv_output_enabled_frame = ttk.Frame(self.option_frame, padding=2)
         self.csv_output_enabledlbl = ttk.Label(self.csv_output_enabled_frame, text="CSV output")
         self.csv_output_enabled = StringVar()
         self.csv_button_enabled = ttk.Radiobutton(self.csv_output_enabled_frame, text='Enabled', variable=self.csv_output_enabled, value='True')
         self.csv_button_disabled = ttk.Radiobutton(self.csv_output_enabled_frame, text='Disabled', variable=self.csv_output_enabled, value='False')
-        self.csv_file_name_frame = ttk.Frame(self.option_frame)
+        self.csv_file_name_frame = ttk.Frame(self.option_frame, padding=2)
         self.csv_file_namelbl = ttk.Label(self.csv_file_name_frame, text="Name of output file")
         self.csv_file_name = StringVar()
         self.csv_file_name_entry = ttk.Entry(self.csv_file_name_frame, textvariable=self.csv_file_name)
         self.csv_file_name_entry.insert(0, time.strftime("SimulationData-%Y%m%d-%H%M%S"))
-        self.csv_batch_simulation_frame = ttk.Frame(self.option_frame)
+        self.csv_batch_simulation_frame = ttk.Frame(self.option_frame, padding=2)
         self.csv_batch_simulationlbl = ttk.Label(self.csv_batch_simulation_frame, text="Batch Simulation (Default 1)")
         self.csv_batch_simulation = StringVar()
         self.csv_batch_simulation_entry = ttk.Entry(self.csv_batch_simulation_frame, textvariable=self.csv_batch_simulation, width=6, validate='key', validatecommand=check_num)

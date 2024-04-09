@@ -23,10 +23,6 @@ class Passenger:
             elif p.inElevator & p.arrived == False:
                 p.travelTime = p.travelTime + time
 
-    def add_travel_time(self, time):
-        if self.arrived == False:
-            self.travelTime = self.travelTime + time
-
     def reach_target(self, floor):
         if floor == self.targetFloor:
             self.arrived = True
