@@ -175,21 +175,9 @@ def start_real_time_simulation(number_of_passengers, number_of_floor, elevator_a
             for p in passengerExiting:
                 building[elevator.currentFloor].remove_passenger(p)
 
-            # Passenger enter elevator
-            for p in building[elevator.currentFloor].passenger:
-                if p.direction == elevator.direction:  # If the elevator direction matches passenger's direction
-                    response = elevator.add_passenger(p)
-                    if response:
-                        passengerExiting.append(p)
-            if len(passengerExiting) > 0:
-                Passenger.add_wait_time(1)
-                time = time + 1
-            for p in passengerExiting:
-                building[elevator.currentFloor].remove_passenger(p)
-
             elevator.remove_passenger()  # Passenger exit elevator
             # print(Passenger.all_passenger)
-            if elevator_time > 3:
+            if elevator_time > 4:
                 elevator_time = 0
                 print(elevator)
                 elevator.move_to_next_floor()
